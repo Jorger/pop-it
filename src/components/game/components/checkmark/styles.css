@@ -1,0 +1,26 @@
+.game-checkmark {
+  -webkit-tap-highlight-color: transparent;
+  align-items: center;
+  border-radius: 50%;
+  border: 8px solid white;
+  bottom: 5%;
+  cursor: pointer;
+  display: flex;
+  height: 100px;
+  justify-content: center;
+  position: absolute;
+  width: 100px;
+  box-shadow: rgb(17 17 26 / 22%) 7px 5px 0px;
+}
+
+.game-checkmark img {
+  width: 65%;
+}
+
+.game-checkmark.red {
+  background: var(--bag-red);
+}
+
+.game-checkmark.blue {
+  background: var(--bag-blue);
+}

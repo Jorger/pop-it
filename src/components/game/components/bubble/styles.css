@@ -1,0 +1,150 @@
+.game-bubble {
+  /* Purple */
+  --purple-bo-1: #584062;
+  --purple-bo-2: #b892bd;
+  --purple-interior: #322838;
+  --purple-bg-1: #cf7e9f;
+  --purple-bg-2: #e5c0cf;
+
+  /* Blue */
+  --blue-bo-1: #117488;
+  --blue-bo-2: #53d9f5;
+  --blue-interior: #16444e;
+  --blue-bg-1: #00c2fe;
+  --blue-bg-2: #7fe1fc;
+
+  /* Green */
+  --green-bo-1: #4b7129;
+  --green-bo-2: #85ca91;
+  --green-interior: #2f4a19;
+  --green-bg-1: #76b23f;
+  --green-bg-2: #bada9e;
+
+  /* Yellow */
+  --yellow-bo-1: #a07238;
+  --yellow-bo-2: #ffd976;
+  --yellow-interior: #543e1f;
+  --yellow-bg-1: #fdb14b;
+  --yellow-bg-2: #ffdba5;
+
+  /* Orange */
+  --orange-bo-1: #be6c3a;
+  --orange-bo-2: #ffb46e;
+  --orange-interior: #783c19;
+  --orange-bg-1: #f99357;
+  --orange-bg-2: #ffc9aa;
+
+  /* Red */
+  --red-bo-1: #ae4139;
+  --red-bo-2: #ff988e;
+  --red-interior: #67211f;
+  --red-bg-1: #f96865;
+  --red-bg-2: #fdb5b1;
+}
+
+.game-bubble {
+  -webkit-tap-highlight-color: transparent;
+  background: none;
+  background: var(--bubble-interior);
+  border-radius: 50%;
+  border: none;
+  box-shadow:
+    inset black 5px 6px 4px,
+    var(--bubble-bo-1) 0px 0px 0px 4px,
+    var(--bubble-bo-2) 0px 0px 0px 6px;
+  margin: 9px;
+  position: relative;
+  z-index: 1;
+}
+
+.game-bubble:not(:disabled) {
+  cursor: pointer;
+}
+
+.game-bubble::before,
+.game-bubble::after {
+  border-radius: 50%;
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.game-bubble::after {
+  background: radial-gradient(
+    circle at 50% 50%,
+    hsla(0, 0%, 100%, 0.8),
+    hsla(0, 0%, 100%, 0.8) 14%,
+    hsla(0, 0%, 100%, 0) 24%
+  );
+  filter: blur(2px);
+  transform: translateX(-25%) translateY(-25%) skewX(-20deg);
+}
+
+.game-bubble::before {
+  background: radial-gradient(
+    circle at 60% 60%,
+    var(--bubble-bg-1) 10%,
+    var(--bubble-bg-2) 100%
+  );
+}
+
+/* Colors */
+.game-bubble.purple {
+  --bubble-interior: var(--purple-interior);
+  --bubble-bo-1: var(--purple-bo-1);
+  --bubble-bo-2: var(--purple-bo-2);
+  --bubble-bg-1: var(--purple-bg-1);
+  --bubble-bg-2: var(--purple-bg-2);
+}
+
+.game-bubble.blue {
+  --bubble-interior: var(--blue-interior);
+  --bubble-bo-1: var(--blue-bo-1);
+  --bubble-bo-2: var(--blue-bo-2);
+  --bubble-bg-1: var(--blue-bg-1);
+  --bubble-bg-2: var(--blue-bg-2);
+}
+
+.game-bubble.green {
+  --bubble-interior: var(--green-interior);
+  --bubble-bo-1: var(--green-bo-1);
+  --bubble-bo-2: var(--green-bo-2);
+  --bubble-bg-1: var(--green-bg-1);
+  --bubble-bg-2: var(--green-bg-2);
+}
+
+.game-bubble.yellow {
+  --bubble-interior: var(--yellow-interior);
+  --bubble-bo-1: var(--yellow-bo-1);
+  --bubble-bo-2: var(--yellow-bo-2);
+  --bubble-bg-1: var(--yellow-bg-1);
+  --bubble-bg-2: var(--yellow-bg-2);
+}
+
+.game-bubble.orange {
+  --bubble-interior: var(--orange-interior);
+  --bubble-bo-1: var(--orange-bo-1);
+  --bubble-bo-2: var(--orange-bo-2);
+  --bubble-bg-1: var(--orange-bg-1);
+  --bubble-bg-2: var(--orange-bg-2);
+}
+
+.game-bubble.red {
+  --bubble-interior: var(--red-interior);
+  --bubble-bo-1: var(--red-bo-1);
+  --bubble-bo-2: var(--red-bo-2);
+  --bubble-bg-1: var(--red-bg-1);
+  --bubble-bg-2: var(--red-bg-2);
+}
+
+.game-bubble.game-bubble-selected {
+  --bubble-bo-1: white;
+}
+
+.game-bubble.game-bubble-pop::before,
+.game-bubble.game-bubble-pop::after {
+  content: none;
+}

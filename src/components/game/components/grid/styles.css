@@ -1,0 +1,61 @@
+.game-grid {
+  --row-gap: calc(var(--gap-grid) * 1.2);
+  --border-radius: 25px;
+  border-radius: var(--border-radius);
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 1px 4px,
+    rgb(51, 51, 51) 0px 0px 0px 6px,
+    rgb(0 0 0 / 25%) 20px 19px 2px;
+  column-gap: var(--gap-grid);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  height: var(--size-grid);
+  row-gap: var(--row-gap);
+  width: var(--size-grid);
+  position: relative;
+
+  background-image:
+    linear-gradient(var(--bg-purple), var(--bg-purple)),
+    linear-gradient(var(--bg-blue), var(--bg-blue)),
+    linear-gradient(var(--bg-green), var(--bg-green)),
+    linear-gradient(var(--bg-yellow), var(--bg-yellow)),
+    linear-gradient(var(--bg-orange), var(--bg-orange)),
+    linear-gradient(var(--bg-red), var(--bg-red));
+
+  background-position:
+    0 0,
+    0 var(--size-cell),
+    0 calc(var(--size-cell) * 2),
+    0 calc(var(--size-cell) * 3),
+    0 calc(var(--size-cell) * 4),
+    0 calc(var(--size-cell) * 5);
+
+  background-size: 100% var(--size-cell);
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.game-grid::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+
+  background-image:
+    linear-gradient(var(--bo-blue), var(--bo-blue)),
+    linear-gradient(var(--bo-green), var(--bo-green)),
+    linear-gradient(var(--bo-yellow), var(--bo-yellow)),
+    linear-gradient(var(--bo-orange), var(--bo-orange)),
+    linear-gradient(var(--bo-red), var(--bo-red));
+
+  background-position:
+    0 calc(var(--size-cell) - 6px),
+    0 calc(calc(var(--size-cell) - 3px) * 2),
+    0 calc(calc(var(--size-cell) - 2px) * 3),
+    0 calc(calc(var(--size-cell) - 1px) * 4),
+    0 calc(calc(var(--size-cell) - 1px) * 5);
+  background-size: 100% var(--row-gap);
+  background-repeat: no-repeat;
+}

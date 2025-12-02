@@ -1,6 +1,4 @@
 .game-wrapper {
-  --bg-red: #fe6057;
-  --bg-blue: #03c1f0;
   --bg-initial: rgb(62, 61, 61);
 }
 
@@ -18,11 +16,11 @@
 }
 
 .game-wrapper.red {
-  background-color: var(--bg-red);
+  background-color: var(--bag-red);
 }
 
 .game-wrapper.blue {
-  background-color: var(--bg-blue);
+  background-color: var(--bag-blue);
 }
 
 .game-wrapper-disable {

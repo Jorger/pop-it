@@ -1,3 +1,24 @@
+:root {
+  /* Para el fondo del juego */
+  --bag-red: #fe6057;
+  --bag-blue: #03c1f0;
+
+  /* Para el background de la grilla */
+  --bg-purple: #925c99;
+  --bg-blue: #03c1ee;
+  --bg-green: #44aa56;
+  --bg-yellow: #ffbc30;
+  --bg-orange: #fd912f;
+  --bg-red: #fe6057;
+  /* Para los borders de la grilla*/
+  --bo-purple: #563e64;
+  --bo-blue: #14728c;
+  --bo-green: #487020;
+  --bo-yellow: #9c723a;
+  --bo-orange: #c36c33;
+  --bo-red: #b03d3e;
+}
+
 * {
   padding: 0;
   margin: 0;
