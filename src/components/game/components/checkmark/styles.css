@@ -11,6 +11,7 @@
   position: absolute;
   width: 100px;
   box-shadow: rgb(17 17 26 / 22%) 7px 5px 0px;
+  animation: bounceIn 0.8s both;
 }
 
 .game-checkmark img {
