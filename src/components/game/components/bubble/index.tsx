@@ -11,7 +11,7 @@ const CLASS_NAMES = {
 };
 
 interface BubbleProps extends IBubble {
-  position: IMatrix;
+  isSelected: boolean;
   onClick: (position: IMatrix) => void;
 }
 

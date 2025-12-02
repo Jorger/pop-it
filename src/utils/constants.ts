@@ -1,3 +1,5 @@
+import { IUInteractions } from "../interfaces";
+
 export const BASE_WIDTH = 412;
 export const BASE_HEIGHT = 732;
 export const BASE_CLASS_NAME_GAME = "game";
@@ -27,4 +29,18 @@ export const JS_CSS_VARIABLES: Record<string, number> = {
   SIZE_GRID,
   GAP_GRID,
   SIZE_CELL,
+};
+
+export enum GAME_ACTION_NAME {
+  StateSync = "stateSync",
+  OnSelectBubble = "onSelectBubble",
+  onNextTurn = "onNextTurn",
+}
+
+export const INITIAL_UI_INTERACTIONS: IUInteractions = {
+  showCounter: true,
+  disableUI: false,
+  startTimer: false,
+  waitEffect: false,
+  isGameOver: false,
 };
