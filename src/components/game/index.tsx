@@ -1,18 +1,39 @@
-import { Bubbles, Checkmark, GameWrapper, Grid } from "./components";
-import { getCurrentColor, validateSelectBubble } from "./helpers";
 import { PlayerId } from "rune-sdk";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useWait } from "../../hooks";
 import {
+  Bubbles,
+  Checkmark,
+  CounterTurn,
+  GameWrapper,
+  Grid,
+  OpponentThinks,
+  ShowTurn,
+  StartCounter,
+} from "./components";
+import {
+  DELAY_START_TIMER,
   GAME_ACTION_NAME,
   INITIAL_UI_INTERACTIONS,
 } from "../../utils/constants";
+import {
+  getCurrentColor,
+  getRandomBubble,
+  validateNextTurn,
+  validateSelectBubble,
+} from "./helpers";
 import type {
   GameState,
   IMatrix,
   IUInteractions,
   TBoardColor,
+  TInvalidPop,
 } from "../../interfaces";
 
+/**
+ * Componente principal del juego..
+ * @returns
+ */
 const Game = () => {
   /**
    * Guarda el estado del juego que proviene del server...
@@ -30,6 +51,11 @@ const Game = () => {
   const [uiInteractions, setUiInteractions] = useState<IUInteractions>(
     INITIAL_UI_INTERACTIONS
   );
+
+  /**
+   * Guarda el estado para cuando son pops invalidos y agrega una animación...
+   */
+  const [invalidPop, setInvalidPop] = useState<TInvalidPop>(null);
 
   /**
    * Se cálcula el ID del usuario que tien el turno
@@ -52,11 +78,6 @@ const Game = () => {
   const players = game?.players || [];
 
   /**
-   * Obtiene la información del jugador actual en cada sesión...
-   */
-  // const currentPlayer = getPlayerByID(yourPlayerId || "", players);
-
-  /**
    * El lstado de burbujas que ha seleccionado el jugador...
    */
   const selectedBubles = game?.selectBubbles || [];
@@ -74,12 +95,14 @@ const Game = () => {
   /**
    * Extraer la información que se require de la interacción del UI
    */
-  const { disableUI } = uiInteractions;
+  const { disableUI, showCounter, startTimer, waitEffect } = uiInteractions;
 
   /**
    * Se ontiene el color del board dependiendo del turno...
    */
-  const currentColor = getCurrentColor(turnID, players);
+  const currentColor = showCounter
+    ? "INITIAL"
+    : getCurrentColor(turnID, players);
 
   /**
    * Bloquea el UI, para prevenir cualquier acción por parte del usuario...
@@ -90,6 +113,21 @@ const Game = () => {
    * Valida si muestra el botón de aceptar las burbujas...
    */
   const showCheckMark = !isDisableUI && hasSelectedBubbles;
+
+  /**
+   * Si se muestra el mensaje del turno...
+   */
+  const showMessage = !showCounter && hasTurn;
+
+  /**
+   * Si se muestra el componente que indica que el oponenente está pensando...
+   */
+  const showOpponentThinks = !showCounter && !hasTurn && startTimer;
+
+  /**
+   * Guarda el color actual del turno...
+   */
+  const colorPlayerTurn = currentColor as TBoardColor;
 
   /**
    * Efecto para configurar el SDK de Rune
@@ -107,8 +145,6 @@ const Game = () => {
          */
         setGame(game);
 
-        // console.log(game);
-
         /**
          * Indica que es el evento inicial cuando inicia el juego
          */
@@ -124,10 +160,28 @@ const Game = () => {
          */
         if (isNewGame) {
           setUiInteractions(INITIAL_UI_INTERACTIONS);
+          setInvalidPop(null);
         }
 
         if (action?.name === GAME_ACTION_NAME.OnSelectBubble) {
-          console.log("ES POP? ", game.isBubblePop);
+          console.log("Para el sonido, es pop? ", game.isBubblePop);
+
+          /**
+           * Si es game over, en este caso se bloque el UI y además
+           * se detiene el cronometro...
+           */
+          if (game.isGameOver || game.isAuto) {
+            const waitEffect = !game.isGameOver && game.isAuto;
+
+            setUiInteractions((current) => {
+              return {
+                ...current,
+                disableUI: true,
+                startTimer: false,
+                waitEffect,
+              };
+            });
+          }
         }
 
         /**
@@ -135,15 +189,20 @@ const Game = () => {
          */
         if (action?.name === GAME_ACTION_NAME.onNextTurn) {
           /**
-           * Se bloquea el UI y se pasa la validación de game over...
+           * Se reinicia el estado de pop invalido...
+           */
+          setInvalidPop(null);
+
+          /**
+           * Se bloquea el UI para los dos clientes y se establece
+           * la bandera para la interrupción que habilita el UI
            */
           setUiInteractions((current) => {
             return {
               ...current,
               disableUI: true,
               startTimer: false,
-              waitEffect: true,
-              isGameOver: game.isGameOver,
+              waitEffect: !game.isGameOver,
             };
           });
         }
@@ -151,11 +210,45 @@ const Game = () => {
     });
   }, []);
 
+  /**
+   * Función que se ejcuta cuando el counter inicial ha terminado...
+   */
+  const handleEndStartCounter = useCallback(() => {
+    setUiInteractions({
+      ...INITIAL_UI_INTERACTIONS,
+      showCounter: false,
+      startTimer: true,
+    });
+  }, []);
+
+  /**
+   * Para habilitar el UI, una vez se ha hecho un lanzamiento...
+   */
+  const handleEnabledUI = useCallback(() => {
+    setUiInteractions((current) => {
+      return {
+        ...current,
+        disableUI: false,
+        startTimer: true,
+        waitEffect: false,
+      };
+    });
+  }, []);
+
+  /**
+   * Interrupción para habilitar el UI...
+   */
+  useWait(waitEffect, DELAY_START_TIMER, handleEnabledUI);
+
   if (!game) {
     // Rune only shows your game after an onChange() so no need for loading screen
     return;
   }
 
+  /**
+   * Función que se ejecuta cuando se selecciona una burbuja...
+   * @param position
+   */
   const handleSelectBubble = (position: IMatrix) => {
     if (!isDisableUI) {
       validateSelectBubble({
@@ -163,27 +256,58 @@ const Game = () => {
         position,
         selectRow,
         bubbles: game.bubbles,
+        setInvalidPop,
       });
     }
   };
 
-  // console.log(game.bubbles);
+  /**
+   * Para validar el siguiente turno...
+   */
+  const handleNextTurn = () => {
+    if (!isDisableUI) {
+      validateNextTurn(setUiInteractions);
+    }
+  };
+
+  /**
+   * Función que se ejecuta cuando el tiempo del turno
+   * ha terminado...
+   */
+  const handleInterval = () => {
+    if (!isDisableUI) {
+      getRandomBubble({
+        selectedBubles,
+        bubbles: game.bubbles,
+        setUiInteractions,
+      });
+    }
+  };
 
   return (
     <GameWrapper currentColor={currentColor} disableUI={isDisableUI}>
+      {showCounter && (
+        <StartCounter handleEndStartCounter={handleEndStartCounter} />
+      )}
+      <CounterTurn
+        players={players}
+        startTimer={startTimer}
+        turnID={turnID}
+        handleInterval={handleInterval}
+      />
+      {showOpponentThinks && <OpponentThinks currentColor={colorPlayerTurn} />}
       <Grid>
         <Bubbles
           bubbles={game.bubbles}
+          invalidPop={invalidPop}
           selectBubbles={selectedBubles}
           onClick={handleSelectBubble}
         />
       </Grid>
       {showCheckMark && (
-        <Checkmark
-          color={currentColor as TBoardColor}
-          onClick={() => console.log("ACEPTA")}
-        />
+        <Checkmark color={colorPlayerTurn} onClick={handleNextTurn} />
       )}
+      {showMessage && <ShowTurn currentColor={colorPlayerTurn} />}
     </GameWrapper>
   );
 };

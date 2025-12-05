@@ -1,7 +1,13 @@
 import { cellPositionInRage } from "./utils/indexInRange";
-import { EBoardColor, EBubbleColors, TOTAL_CELLS } from "./utils/constants";
+import { getIndexInSelectBubbles } from "./utils/isPositionInSelectBubbles";
 import { PlayerId } from "rune-sdk";
 import { randomNumber } from "./utils/randomNumber";
+import {
+  EBoardColor,
+  EBubbleColors,
+  TOTAL_CELLS,
+  TOTAL_CELLS_GRID,
+} from "./utils/constants";
 import type { GameState, IBubble, Player, TBubbleColors } from "./interfaces";
 
 /**
@@ -11,7 +17,7 @@ import type { GameState, IBubble, Player, TBubbleColors } from "./interfaces";
  * @param allPlayerIds
  * @returns
  */
-export const getCurretPlayer = (players: Player[], playerId: PlayerId) => {
+const getCurretPlayer = (players: Player[], playerId: PlayerId) => {
   const currentIndex = players.findIndex((v) => v.playerID === playerId);
 
   if (currentIndex < 0) {
@@ -102,10 +108,129 @@ const getPlayerData = (allPlayerIds: string[]): GameState => {
     turnID,
     selectBubbles: [],
     selectRow: -1,
+    isAuto: false,
     isBubblePop: false,
     isGameOver: false,
     bubbles,
   };
+};
+
+/**
+ * Obtener el total de las burbujas que ya han sido explotadas...
+ * @param bubbles
+ * @returns
+ */
+const getTotalPoppedBubbles = (bubbles: IBubble[][]) => {
+  let total = 0;
+
+  for (const row of bubbles) {
+    for (const bubble of row) {
+      if (bubble.isPop && bubble.isDisabled) {
+        total++;
+      }
+    }
+  }
+
+  return total;
+};
+
+/**
+ * Valida el siguiente turno del usuario...
+ * @param game
+ * @param playerId
+ */
+const validateNextTurn = (game: GameState, playerId: PlayerId) => {
+  /**
+   * Si no existen ítems seleccioandos, se muestra un error,
+   * ya que en este punto debería...
+   */
+  if (game.selectRow < 0 || game.selectBubbles.length === 0) {
+    throw Rune.invalidAction();
+  }
+
+  /**
+   * Se obtiene el index del usuario que hizo el lanzamiento...
+   */
+  const currentIndex = getCurretPlayer(game.players, playerId);
+
+  /**
+   * El indice del player contrario...
+   */
+  const oposieIndexPlayer = currentIndex === 0 ? 1 : 0;
+
+  /**
+   * Ahora se debe establecer que los ítems seleccioandos
+   * ahora deben quedar, en este caso estableciendo un valor de
+   * disabled
+   */
+  for (const { row, col } of game.selectBubbles) {
+    game.bubbles[row][col].isPop = true;
+    game.bubbles[row][col].isDisabled = true;
+  }
+
+  /**
+   * Ahora reiniciar los valores de fila y burbujas seleccioandas
+   */
+  game.selectRow = -1;
+  game.selectBubbles = [];
+
+  /**
+   * Valida el game over en este punto...
+   */
+  validateGameOver(game, playerId);
+
+  /**
+   * Ahora establecer el siguiente turno...
+   */
+  if (!game.isGameOver) {
+    game.turnID = game.players[oposieIndexPlayer].playerID;
+  }
+};
+
+/**
+ * Valida si hay game over en el juego..
+ * @param game
+ * @param playerId
+ */
+const validateGameOver = (game: GameState, playerId: PlayerId) => {
+  /**
+   * Obtener el número de burbujas que ya han sido explotadas...
+   */
+  const totalPoppedBubbles = getTotalPoppedBubbles(game.bubbles);
+
+  /**
+   * Valida si es game over...
+   */
+  game.isGameOver = totalPoppedBubbles === TOTAL_CELLS_GRID;
+
+  /**
+   * SI lo es, se valida quien es el ganador y perdedor...
+   */
+  if (game.isGameOver) {
+    /**
+     * Se obtiene el index del usuario que hizo el lanzamiento...
+     */
+    const currentIndex = getCurretPlayer(game.players, playerId);
+
+    /**
+     * El indice del player contrario...
+     */
+    const oposieIndexPlayer = currentIndex === 0 ? 1 : 0;
+
+    /**
+     * Se valida el ganar y el perdedor, el perdedor sería el
+     * usuario actual, por que es que estalla la última burbuja...
+     */
+    const winner = game.players[oposieIndexPlayer].playerID;
+    const loser = game.players[currentIndex].playerID;
+
+    Rune.gameOver({
+      players: {
+        [winner]: "WON",
+        [loser]: "LOST",
+      },
+    });
+  }
 };
 
 Rune.initLogic({
@@ -113,8 +238,12 @@ Rune.initLogic({
   maxPlayers: 2,
   setup: (allPlayerIds) => getPlayerData(allPlayerIds),
   actions: {
-    onSelectBubble: (position, { game }) => {
-      // playerId
+    onSelectBubble: ({ position, isAuto = false }, { game, playerId }) => {
+      /**
+       * Sirve para indicarle al cliente si fue una acción automática...
+       */
+      game.isAuto = isAuto;
+
       /**
        * Saber si la posición está en rango...
        */
@@ -123,15 +252,26 @@ Rune.initLogic({
       }
 
       /**
-       * Se obtiene el index del usuario que hizo el lanzamiento...
+       * Obtener el número de burbujas que ya han sido explotadas...
        */
-      // const currentIndex = getCurretPlayer(game.players, playerId);
+      const totalPoppedBubbles = getTotalPoppedBubbles(game.bubbles);
+
+      /**
+       * Para validar si es la última burbuja
+       */
+      const totalLastBubble = TOTAL_CELLS_GRID - 1;
+
+      /**
+       * Indica si e sla última burbuja...
+       */
+      const isLastBubble = totalPoppedBubbles === totalLastBubble;
 
       /**
        * Se debe saber si la burbuja ya estaba selecccioanda...
        */
-      const indexSelectedBubble = game.selectBubbles.findIndex(
-        (v) => v.row === position.row && v.col === position.col
+      const indexSelectedBubble = getIndexInSelectBubbles(
+        position,
+        game.selectBubbles
       );
 
       /**
@@ -148,6 +288,11 @@ Rune.initLogic({
        * Se establece el estado de la burbuja...
        */
       game.bubbles[position.row][position.col].isPop = isBubblePop;
+
+      /**
+       * Si es la última burbuja, se bloquea la misma...
+       */
+      game.bubbles[position.row][position.col].isDisabled = isLastBubble;
 
       /**
        * Se actualiza el valor que será usando en el cliente
@@ -170,10 +315,20 @@ Rune.initLogic({
       } else {
         game.selectBubbles.push(position);
       }
+
+      /**
+       * Hacer la validación del game over...
+       */
+      validateGameOver(game, playerId);
+
+      /**
+       * Si se indica que era auto, quiere decir que se le acabó el tiempo,
+       * por ello se debe dar el turno al siguiente jugador...
+       */
+      if (!isLastBubble && isAuto) {
+        validateNextTurn(game, playerId);
+      }
     },
-    onNextTurn: (_, { game, playerId }) => {
-      // Se debe establecer -1 a game.players[currentIndex].selectRow
-      console.log({ game, playerId });
-    },
+    onNextTurn: (_, { game, playerId }) => validateNextTurn(game, playerId),
   },
 });

@@ -8,10 +8,12 @@ const CLASS_NAMES = {
   WRAPPER: BASE_CLASS_NAME,
   SELECTED: `${BASE_CLASS_NAME}-selected`,
   POP: `${BASE_CLASS_NAME}-pop`,
+  INVALID: `${BASE_CLASS_NAME}-invalid`,
 };
 
 interface BubbleProps extends IBubble {
   isSelected: boolean;
+  isInvalid: boolean;
   onClick: (position: IMatrix) => void;
 }
 
@@ -21,11 +23,12 @@ const Bubble = ({
   isSelected,
   isDisabled,
   isPop,
+  isInvalid,
   onClick,
 }: BubbleProps) => {
   const className = `${CLASS_NAMES.WRAPPER} ${color.toLowerCase()} ${
     isSelected ? CLASS_NAMES.SELECTED : ""
-  } ${isPop ? CLASS_NAMES.POP : ""}`;
+  } ${isPop ? CLASS_NAMES.POP : ""} ${isInvalid ? CLASS_NAMES.INVALID : ""}`;
 
   return (
     <button

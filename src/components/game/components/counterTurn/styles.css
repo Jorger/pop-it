@@ -1,0 +1,41 @@
+.game-counter-turn {
+  align-items: center;
+  border-radius: 50%;
+  color: black;
+  display: flex;
+  font-weight: bold;
+  height: 60px;
+  justify-content: center;
+  position: absolute;
+  top: 10px;
+  width: 60px;
+  z-index: 2;
+  padding: 5px;
+  background: conic-gradient(white var(--progress), rgba(0, 0, 0, 0.1) 0deg);
+  box-shadow:
+    rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+.game-counter-turn-profile {
+  align-items: center;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  font-size: 18px;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.game-counter-turn-avatar {
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+
+.game-counter-turn-avatar-visible {
+  opacity: 1;
+}

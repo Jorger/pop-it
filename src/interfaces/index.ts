@@ -8,6 +8,9 @@ declare global {
 export type TBoardColor = keyof typeof EBoardColor;
 export type TBubbleColors = keyof typeof EBubbleColors;
 export type IBackgroud = TBoardColor | "INITIAL";
+export type TUserAvatar = Record<PlayerId, string>;
+export type TKeyPosition = `${number}-${number}`;
+export type TInvalidPop = Record<TKeyPosition, number> | null;
 
 export interface IMatrix {
   row: number;
@@ -31,13 +34,19 @@ export interface GameState {
   turnID: PlayerId;
   isGameOver: boolean;
   isBubblePop: boolean;
+  isAuto: boolean;
   selectBubbles: IMatrix[];
   selectRow: number;
   bubbles: IBubble[][];
 }
 
+export interface ISelectParams {
+  position: IMatrix;
+  isAuto: boolean;
+}
+
 export type GameActions = {
-  onSelectBubble: (position: IMatrix) => void;
+  onSelectBubble: (params: ISelectParams) => void;
   onNextTurn: () => void;
 };
 
@@ -59,9 +68,4 @@ export interface IUInteractions {
    * Valida si activa el efecto para esperar la animación de flip...
    */
   waitEffect: boolean;
-
-  /**
-   * Para saber si es el game over...
-   */
-  isGameOver: boolean;
 }

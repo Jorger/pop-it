@@ -8,6 +8,9 @@ export const GAP_GRID = 5;
 export const TOTAL_CELLS = 6;
 export const TOTAL_CELLS_GRID = 6 ** 2;
 export const SIZE_CELL = Math.ceil(SIZE_GRID / TOTAL_CELLS);
+export const TIME_COUNTDOWN = 500;
+export const TIME_INTERVAL_CHRONOMETER = 100;
+export const DELAY_START_TIMER = 10;
 
 export enum EBoardColor {
   BLUE = "BLUE",
@@ -42,5 +45,11 @@ export const INITIAL_UI_INTERACTIONS: IUInteractions = {
   disableUI: false,
   startTimer: false,
   waitEffect: false,
-  isGameOver: false,
+};
+
+export const LABELS = {
+  PERCENTAGE: "100",
+  GO: "GO!",
+  YOUR_TURN: "Your turn",
+  OPPONENT_THINKS: "Opponent thinks",
 };
