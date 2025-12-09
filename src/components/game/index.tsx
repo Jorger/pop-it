@@ -1,4 +1,5 @@
 import { PlayerId } from "rune-sdk";
+import { playSound } from "../../sounds";
 import { useCallback, useEffect, useState } from "react";
 import { useWait } from "../../hooks";
 import {
@@ -13,6 +14,7 @@ import {
 } from "./components";
 import {
   DELAY_START_TIMER,
+  ESounds,
   GAME_ACTION_NAME,
   INITIAL_UI_INTERACTIONS,
 } from "../../utils/constants";
@@ -164,7 +166,16 @@ const Game = () => {
         }
 
         if (action?.name === GAME_ACTION_NAME.OnSelectBubble) {
-          console.log("Para el sonido, es pop? ", game.isBubblePop);
+          const sound = game.isGameOver
+            ? ESounds.GAME_OVER
+            : game.isBubblePop
+              ? ESounds.SELECT_BUBBLE
+              : ESounds.DESELECT_BUBBLE;
+
+          /**
+           * Reproduce el sonido...
+           */
+          playSound(sound);
 
           /**
            * Si es game over, en este caso se bloque el UI y además
@@ -188,6 +199,11 @@ const Game = () => {
          * Actión que indica que se ha seleccionado una celda...
          */
         if (action?.name === GAME_ACTION_NAME.onNextTurn) {
+          /**
+           * Para el sonido de la acción...
+           */
+          playSound(game.isGameOver ? ESounds.GAME_OVER : ESounds.NEXT_TURN);
+
           /**
            * Se reinicia el estado de pop invalido...
            */

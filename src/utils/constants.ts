@@ -9,7 +9,7 @@ export const TOTAL_CELLS = 6;
 export const TOTAL_CELLS_GRID = 6 ** 2;
 export const SIZE_CELL = Math.ceil(SIZE_GRID / TOTAL_CELLS);
 export const TIME_COUNTDOWN = 500;
-export const TIME_INTERVAL_CHRONOMETER = 100;
+export const TIME_INTERVAL_CHRONOMETER = 200;
 export const DELAY_START_TIMER = 10;
 
 export enum EBoardColor {
@@ -53,3 +53,13 @@ export const LABELS = {
   YOUR_TURN: "Your turn",
   OPPONENT_THINKS: "Opponent thinks",
 };
+
+export enum ESounds {
+  COUNTER = "COUNTER",
+  DESELECT_BUBBLE = "DESELECT_BUBBLE",
+  GAME_OVER = "GAME_OVER",
+  NEXT_TURN = "NEXT_TURN",
+  SELECT_BUBBLE = "SELECT_BUBBLE",
+  WHISTLE = "WHISTLE",
+  WRONG_BUBBLE = "WRONG_BUBBLE",
+}

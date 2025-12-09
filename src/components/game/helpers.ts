@@ -1,5 +1,7 @@
 import { cellPositionInRage } from "../../utils/indexInRange";
+import { ESounds } from "../../utils/constants";
 import { PlayerId } from "rune-sdk";
+import { playSound } from "../../sounds";
 import { randomNumber } from "../../utils/randomNumber";
 import {
   isPositionInSelectBubbles,
@@ -58,6 +60,11 @@ const updateInvalidPop = (invalidPop: TInvalidPop, position: IMatrix) => {
   } else {
     copyCurrent[keyPosition]++;
   }
+
+  /**
+   * Sonido que indica que la burbuja seleccionada, no es válida...
+   */
+  playSound(ESounds.WRONG_BUBBLE);
 
   return copyCurrent;
 };
