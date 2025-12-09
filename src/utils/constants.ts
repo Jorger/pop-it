@@ -52,6 +52,7 @@ export const LABELS = {
   GO: "GO!",
   YOUR_TURN: "Your turn",
   OPPONENT_THINKS: "Opponent thinks",
+  ALERT: "Don't pop the last bubble, or you'll lose!",
 };
 
 export enum ESounds {
