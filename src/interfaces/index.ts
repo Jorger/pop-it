@@ -1,4 +1,4 @@
-import { EBoardColor, EBubbleColors } from "../utils/constants";
+import { EBoardColor, EBubbleColors, ESounds } from "../utils/constants";
 import { PlayerId, RuneClient } from "rune-sdk";
 
 declare global {
@@ -11,6 +11,8 @@ export type IBackgroud = TBoardColor | "INITIAL";
 export type TUserAvatar = Record<PlayerId, string>;
 export type TKeyPosition = `${number}-${number}`;
 export type TInvalidPop = Record<TKeyPosition, number> | null;
+export type TESounds = keyof typeof ESounds;
+export type Sounds = Record<TESounds, Howl>;
 
 export interface IMatrix {
   row: number;
