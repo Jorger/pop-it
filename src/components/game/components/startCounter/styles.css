@@ -15,3 +15,13 @@
   font-size: 100px;
   animation: bounceIn 0.8s both;
 }
+
+.game-counter-alert {
+  bottom: 60px;
+  font-size: 25px;
+  font-weight: bold;
+  position: absolute;
+  text-align: center;
+  text-wrap: balance;
+  width: 80%;
+}

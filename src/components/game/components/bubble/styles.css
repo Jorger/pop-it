@@ -57,6 +57,18 @@
   z-index: 1;
 }
 
+/* Validación especial para safari, por que no soporta sombras
+con border redondeados... */
+@supports (background: -webkit-named-image(i)) {
+  .game-bubble {
+    border: 6px solid var(--bubble-bo-2);
+    box-shadow: inset black 5px 6px 4px;
+    margin: 3px;
+    outline-offset: -6px;
+    outline: 4px solid var(--bubble-bo-1);
+  }
+}
+
 .game-bubble:not(:disabled) {
   cursor: pointer;
 }

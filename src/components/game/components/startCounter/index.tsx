@@ -11,6 +11,11 @@ import React, { useState } from "react";
 
 const BASE_CLASS_NAME = `${BASE_CLASS_NAME_GAME}-counter`;
 
+const CLASS_NAMES = {
+  WRAPPER: BASE_CLASS_NAME,
+  ALERT: `${BASE_CLASS_NAME}-alert`,
+};
+
 interface StartCounterProps {
   handleEndStartCounter: () => void;
 }
@@ -42,10 +47,11 @@ const StartCounter = ({ handleEndStartCounter }: StartCounterProps) => {
   );
 
   return (
-    <div className={BASE_CLASS_NAME}>
+    <div className={CLASS_NAMES.WRAPPER}>
       <span key={counterTimer}>
         {counterTimer > 0 ? counterTimer : LABELS.GO}
       </span>
+      <div className={CLASS_NAMES.ALERT}>{LABELS.ALERT}</div>
     </div>
   );
 };
